@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from utilities import recup_dataframe
 
-df = recup_dataframe() 
+df = recup_dataframe("SELECT * FROM datanetfloox.filmrecommander LIMIT 1000") 
 
 # Préparation des données: ici, vous devez définir comment vous combinez vos caractéristiques pour la vectorisation
 # Pour l'exemple, supposons que nous combinons simplement toutes les colonnes textuelles en une seule chaîne
@@ -24,23 +24,25 @@ print(f" shape : {cosine_sim.shape}")
 
 
 
-# Créer un mapping entre les titres de films et leurs indices
-indices = pd.Series(df.index, index=df['primaryTitle']).drop_duplicates()
-print(indices)
-
-
+   
 
 # Fonction de recommandation
 def recommend(title, cosine_sim=cosine_sim):
-    if title not in indices:
+    
+    column_values = df['primaryTitle'].values
+    
+    if title not in column_values:
         return "Film non trouvé."
     
-    idx = indices[title]
+    idx = df[df['primaryTitle'] == title].index[0]
+    print(idx)
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:4]  # Les trois films les plus similaires
+    sim_scores = sim_scores[1:6]  # Les trois films les plus similaires
     movie_indices = [i[0] for i in sim_scores]
     return df['primaryTitle'].iloc[movie_indices]
 
 # Exemple d'utilisation
-print(recommend("Le clown et ses chiens"))
+print(recommend("Carmencita"))
+
+

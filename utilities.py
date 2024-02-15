@@ -2,11 +2,10 @@ from sqlalchemy import create_engine, text
 import pandas as pd
 import dotenv
 import os
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 
-def recup_dataframe(): 
+
+def recup_dataframe(resquest): 
     # Charger les variables d'environnement
     dotenv.load_dotenv()
 
@@ -15,6 +14,7 @@ def recup_dataframe():
     engine = create_engine(DATABASE_URI)
 
     # Exécuter la requête SQL et stocker le résultat dans un DataFrame
-    sql_query = text("SELECT * FROM datanetfloox.testalgo LIMIT 300")
+    sql_query = text(resquest)
     df = pd.read_sql(sql_query, engine)
+    engine.dispose()
     return df 
